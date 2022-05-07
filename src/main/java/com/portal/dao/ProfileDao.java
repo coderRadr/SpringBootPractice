@@ -8,8 +8,12 @@ import com.portal.models.ProfileModel;
 @Repository
 public class ProfileDao {
 
-    @Autowired
     private UserProfileDao userProfileDao;
+
+    public ProfileDao(@Autowired UserProfileDao userProfileDao) {
+        this.userProfileDao = userProfileDao;
+    }
+
     public ProfileModel login(String userId, String password) {
         return userProfileDao.getProfileDetails(userProfileDao.getUniqueId(userId, password));
     }

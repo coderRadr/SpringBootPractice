@@ -12,8 +12,8 @@ import com.portal.models.ErrorModel;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-@ControllerAdvice(basePackages = "com.")
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+@ControllerAdvice
+public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ErrorModel> handle(Exception exp) {
         log.error(exp.getMessage(), exp);

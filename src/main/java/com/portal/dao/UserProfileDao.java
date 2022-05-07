@@ -38,6 +38,10 @@ public class UserProfileDao {
 			st.setString(USER_ID, userId);
 			st.setString(PWD, password);
 			ResultSet resultSet = st.executeQuery();
+			if(!resultSet.isBeforeFirst() && resultSet.getRow() == 0) {
+				String msg = String.format("No records found with given id: '%s' (Given Password/userId combination doesn't exist)", userId);
+				throw new RestClientException(msg);
+			}
 			while (resultSet.next()) {
 				uniqueId = resultSet.getString(UNIQUE_ID);
 			}
