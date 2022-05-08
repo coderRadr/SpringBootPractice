@@ -17,6 +17,9 @@ import org.springframework.web.client.RestClientException;
 
 import com.portal.models.ProfileModel;
 
+/**
+ * Dao Class to retrieve User profile Details using MySql Stored Procedure
+ */
 @Repository
 public class UserProfileDao {
 

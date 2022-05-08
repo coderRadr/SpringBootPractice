@@ -18,6 +18,9 @@ import com.portal.models.LoginCred;
 import com.portal.models.ProfileModel;
 import com.portal.service.LoginService;
 
+/**
+ * Main Controller to get Employee Profile Details
+ */
 @RestController(value = "/")
 public class MainController {
 
