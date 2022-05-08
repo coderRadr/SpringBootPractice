@@ -3,7 +3,10 @@ package com.portal.dao;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -52,13 +55,18 @@ public class UserProfileDao {
 
 	}
 
-	public ProfileModel getProfileDetails(String uniqueId) {
+	public List<ProfileModel> getProfileDetails(String uniqueId) {
 		try {
-			ProfileModel model = new ProfileModel();
+			List<ProfileModel> allEmployees = new ArrayList<>();
 			CallableStatement st = jdbcTemplate.getDataSource().getConnection().prepareCall(GET_PROFILE_DTLS);
-			st.setString(UNIQUE_ID, uniqueId);
+			if(StringUtils.isNotEmpty(uniqueId)) {
+				st.setString(UNIQUE_ID, uniqueId);
+			} else {
+				st.setNull(UNIQUE_ID, Types.VARCHAR);
+			}
 			ResultSet resultSet = st.executeQuery();
 			while (resultSet.next()) {
+				ProfileModel model = new ProfileModel();
 				model.setFirstName(resultSet.getString(F_NAME));
 				model.setLastName(resultSet.getString(L_NAME));
 				model.setEmail(resultSet.getString(EMAIL));
@@ -66,8 +74,9 @@ public class UserProfileDao {
 				String allAreas = resultSet.getString(AREA_OF_EXPERTISE);
 				model.setAreaOfExpertise(Arrays.stream(StringUtils.split(allAreas, ',')).map(src -> src.strip())
 						.collect(Collectors.toList()));
+				allEmployees.add(model);
 			}
-			return model;
+			return allEmployees;
 		} catch (SQLException e) {
 			throw new RestClientException(e.getMessage());
 		}

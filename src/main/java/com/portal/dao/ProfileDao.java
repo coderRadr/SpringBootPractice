@@ -1,5 +1,7 @@
 package com.portal.dao;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +17,11 @@ public class ProfileDao {
     }
 
     public ProfileModel login(String userId, String password) {
-        return userProfileDao.getProfileDetails(userProfileDao.getUniqueId(userId, password));
+        return userProfileDao.getProfileDetails(userProfileDao.getUniqueId(userId, password)).get(0);
+    }
+
+    public List<ProfileModel> getEmployeeDetails(){
+        return userProfileDao.getProfileDetails(null);
     }
 
 }

@@ -1,5 +1,8 @@
 package com.portal.util;
 
+import java.time.LocalDateTime;
+
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -21,9 +24,9 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatusCodeException httpStatusCodeException = (HttpStatusCodeException) exp;
             String errorMessage = httpStatusCodeException.getMessage();
             HttpStatus httpStatus = httpStatusCodeException.getStatusCode();
-            return new ResponseEntity<>(new ErrorModel(httpStatus, errorMessage), httpStatus);
+            return new ResponseEntity<>(new ErrorModel(httpStatus, errorMessage, LocalDateTime.now(), MDC.get(ConstantUtil.REQUEST_ID)), httpStatus);
         } else {
-            return new ResponseEntity<>(new ErrorModel(HttpStatus.INTERNAL_SERVER_ERROR, exp.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ErrorModel(HttpStatus.INTERNAL_SERVER_ERROR, exp.getMessage(), LocalDateTime.now(), MDC.get(ConstantUtil.REQUEST_ID)), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
