@@ -14,6 +14,9 @@ import com.portal.models.ErrorModel;
 
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Global Exception Handler for this Application
+ */
 @Log4j2
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {

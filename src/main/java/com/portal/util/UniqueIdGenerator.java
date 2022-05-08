@@ -17,26 +17,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
+/**
+ * Filter bean used to add unique-id txt for Request
+ */
 @Component
 public class UniqueIdGenerator implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        String acceptHeader = httpServletRequest.getHeader(HttpHeaders.ACCEPT);
-        if(StringUtils.isEmpty(acceptHeader)) {
-        	httpServletRequest.setAttribute(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE);
-        	httpServletResponse.addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE);
-        }
-        
-        String contentHeader = httpServletRequest.getHeader(HttpHeaders.CONTENT_TYPE);
-        if(StringUtils.isEmpty(contentHeader)) {
-        	httpServletRequest.setAttribute(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE);
-        	httpServletResponse.addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE);
-        }
-        
-    	String randomId = UUID.randomUUID().toString();
+        String randomId = UUID.randomUUID().toString();
         MDC.put(ConstantUtil.REQUEST_ID, randomId);
         chain.doFilter(request, response);
         MDC.clear();
