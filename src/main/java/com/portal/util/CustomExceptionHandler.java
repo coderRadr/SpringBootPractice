@@ -1,7 +1,7 @@
 package com.portal.util;
 
-import java.time.LocalDateTime;
-
+import com.portal.models.ErrorModel;
+import lombok.extern.log4j.Log4j2;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.portal.models.ErrorModel;
-
-import lombok.extern.log4j.Log4j2;
+import java.time.LocalDateTime;
 
 /**
  * Global Exception Handler for this Application
