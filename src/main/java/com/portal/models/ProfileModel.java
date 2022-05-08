@@ -1,19 +1,24 @@
 package com.portal.models;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.List;
-
 @Data
 @ToString(exclude = {"areaOfExpertise", "yearsOfExperience"})
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 public class ProfileModel {
 
-	private String empId;
+	@Id
+	@GeneratedValue
+	private int empId;
 	
 	private String firstName;
 	
@@ -21,7 +26,7 @@ public class ProfileModel {
 	
 	private String email;
 	
-	private List<String> areaOfExpertise;
+	private String areaOfExpertise;
 	
 	private Integer yearsOfExperience;
 }

@@ -1,42 +1,69 @@
 package com.portal.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.portal.models.ProfileModel;
-import org.apache.commons.lang3.StringUtils;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.portal.dao.ProfilesDao;
+import com.portal.models.ProfileModel;
 
 @Service
 public class EmployeeService {
 
-    private final List<ProfileModel> allProfiles;
+	@Autowired
+	private ProfilesDao dao;
 
-    public EmployeeService(List<ProfileModel> allProfiles) {
-        try {
-            ClassPathResource resource = new ClassPathResource("data/employee_profiles.json");
-            File file = resource.getFile();
-			this.allProfiles = new ObjectMapper().readValue(file, new TypeReference<List<ProfileModel>>() {
-            });
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	private ClassPathResource resource = new ClassPathResource("data/employee_profiles.json");
 
+	@PostConstruct
+	public void addDefaultEmployees() {
+		try {
+			List<ProfileModel> defaultList = new ObjectMapper().readValue(resource.getFile(),
+					new TypeReference<List<ProfileModel>>() {
+					});
+			dao.saveAll(defaultList);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    public List<ProfileModel> getAllEmployeeDtls() {
-        return allProfiles;
-    }
+	public List<ProfileModel> getAllEmployeeDtls() {
+		return dao.findAll();
+	}
 
-    public ProfileModel getEmployeeDtlsById(String id) {
-        String empId = String.format("DEV000%s_US", id);
-        return allProfiles.parallelStream().filter(src ->
-                StringUtils.equals(src.getEmpId(), empId)).findAny().
-                orElseThrow(() -> new RestClientException("No records found with given Id: " + id));
-    }
+	public ProfileModel getEmployeeDtlsById(int id) {
+		return dao.getById(id);
+	}
+
+	public ProfileModel updateEmployeeDtlsById(Integer id, ProfileModel model) {
+		ProfileModel currentDtls = dao.getById(id);
+		BeanUtils.copyProperties(model, currentDtls);
+		ProfileModel saveResponse = dao.save(currentDtls);
+		updateDefaultFile();
+		return saveResponse;
+	}
+
+	private void updateDefaultFile() {
+		try (FileOutputStream outputStream = new FileOutputStream(resource.getFile())) {
+			List<ProfileModel> entireList = dao.findAll();
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(bos);
+			oos.writeObject(entireList);
+			outputStream.write(bos.toByteArray());
+		} catch (Exception exp) {
+			throw new RestClientException("Error occured in updating default data file: " + exp.getMessage());
+		}
+	}
 }
